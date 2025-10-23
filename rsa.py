@@ -55,7 +55,7 @@ def generar_claves(min_primo:int,max_primo:int)-> Tuple[int,int,int]:
 
     d = mod.inversa_mod_p(e, phi_n)
 
-    return n, e, d
+    return (n, e, d)
 
 
 
@@ -79,12 +79,14 @@ def aplicar_padding(m:int, digitos_padding:int)->int:
         aplicar_padding(24,3)=24845
         aplicar_padding(24,0)=24
     """
-    vals_padding = random.choices(range(1,10), k=digitos_padding) 
-    vals_padding = int(''.join(map(str, vals_padding))) 
+    if digitos_padding == 0:
+        return m
+    else:
+        vals_padding = random.choices(range(1,10), k=digitos_padding) 
+        vals_padding = int(''.join(map(str, vals_padding))) 
 
-    m_padded = str(m) + str(vals_padding)
-
-    return int(m_padded)
+        m_padded = str(m) + str(vals_padding)
+        return int(m_padded)
 
 
 def eliminar_padding(m:int,digitos_padding:int)->int:
@@ -108,11 +110,8 @@ def eliminar_padding(m:int,digitos_padding:int)->int:
         eliminar_padding(2432,2)=24
         eliminar_padding(2432,0)=2432
     """
-    m_padded = str(m)
 
-    m = int(m_padded[:-digitos_padding])
-
-    return m 
+    return m if digitos_padding == 0 else int(str(m)[:-digitos_padding])
 
 
 def cifrar_rsa(m:int,n:int,e:int,digitos_padding:int)->int:
@@ -132,8 +131,9 @@ def cifrar_rsa(m:int,n:int,e:int,digitos_padding:int)->int:
 
     Raises: None
     """
-    num = 
-    return mod.potencia_mod_p()
+    
+    num = aplicar_padding(m, digitos_padding)
+    return mod.potencia_mod_p(num, e, n)
 
 
 def descifrar_rsa(c:int,n:int,d:int,digitos_padding:int)->int:
@@ -154,7 +154,8 @@ def descifrar_rsa(c:int,n:int,d:int,digitos_padding:int)->int:
 
     Raises: None
     """
-    pass
+    descifrado = chr(eliminar_padding(mod.potencia_mod_p(c, d, n), digitos_padding))
+    return descifrado
 
 
 def codificar_cadena(s:str)->List[int]:
@@ -219,16 +220,13 @@ def cifrar_cadena_rsa(s:str,n:int,e:int,digitos_padding:int)->List[int]:
 
     Raises: None
     """
-    # text = input("Texto para cifrar: ")
-    # cifrado = ""
-    # for i in text:
-    #     random_values = random.choices(range(10), k = int(pad))
-    #     cifrado += m.potencia_mod_p(i + random_values, e, n) + " "
-    # return cifrado
     cifrado = []
-    for i in s:
-        i_cifrado = cifrar_rsa(ord(i), n, e, digitos_padding)
-        cifrado.append(i_cifrado)
+    for valor in s:
+        if valor.isdigit():
+            valor_cifrado = cifrar_rsa(int(valor), n, e, digitos_padding)
+        else:
+            valor_cifrado = cifrar_rsa(ord(valor), n, e, digitos_padding)
+        cifrado.append(valor_cifrado)
     return cifrado
 
 
@@ -247,7 +245,11 @@ def descifrar_cadena_rsa(cList:List[int],n:int,d:int,digitos_padding:int)->str:
     Raises:
         ValueError: Si, tras decodificar, alguno de los enteros del mensaje no representa un caracter unicode válido.    
     """
-    pass
+    mensaje = ""
+    for c in cList:
+        descifrado = str(descifrar_rsa(c, n, d, digitos_padding))
+        mensaje += descifrado
+    return mensaje
 
 
 def romper_clave(n:int,e:int)->int:

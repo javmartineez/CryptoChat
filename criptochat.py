@@ -2,6 +2,7 @@ import sys
 import os
 import random
 import modular as m
+import rsa
 
 
 def sacar_ficheros(user1: str, user2: str):
@@ -15,45 +16,52 @@ def sacar_ficheros(user1: str, user2: str):
 
     for path in paths:
         if not os.path.exists(path):
-            return "No se encuentran las claves de todos los usuarios"
+            raise ValueError("No se encuentran las claves de todos los usuarios")
     return paths
 
 def leer_claves(fichero: str) -> list:
     lista = []
     with open(fichero) as f:
         for linea in f:
-            linea = linea.strip()
+            linea = int(linea.strip())
             lista.append(linea)
     return lista
 
 
 def cifrar(n, e, pad):
     text = input("Texto para cifrar: ")
-    cifrado = ""
-    for i in text:
-        random_values = random.choices(range(10), k = int(pad))
-        cifrado += m.potencia_mod_p(i + random_values, e, n) + " "
-    return cifrado
+    cifrado = rsa.cifrar_cadena_rsa(text, n, e, pad)
+    print(f"Texto cifrado: {cifrado}")
 
+def descifrar(n, pad, d):
+    text = input("Texto a descifrar: ")
+    lista = list(map(int,text.split(" ")))
+    descifrado = rsa.descifrar_cadena_rsa(lista, n, d, pad)
+    print(f"Texto descifrado: {descifrado}")
 
-
-def main():
+def users():
     arguments = sys.argv[1:]
     user1 = arguments[0]
     user2 = arguments[1]
-    paths = sacar_ficheros(user1, user2)
-    if type(paths) == str:
-        return paths
-    [n1, e1, pad1] = leer_claves(paths[0])
-    [n2, e2, pad2] = leer_claves(paths[2])
-    d, = leer_claves(paths[1])
+    return (user1, user2)
+
+def main():
+    user1, user2 = users()
+
+    path1_pub, path1_priv, path2_pub = sacar_ficheros(user1, user2)
+
+    n1, e1, pad1 = leer_claves(path1_pub)
+    n2, e2, pad2 = leer_claves(path2_pub)
+    d1, = leer_claves(path1_priv)
 
     actividad = ""
-    while actividad != "c":
+    while actividad != "S":
         actividad = input("cifrar (C), descifrar (D) o salir (S): ").upper()
         if actividad == "C":
-            cifrado = cifrar(n2, e2, pad2)
-            print(f"Texto cifrado: {cifrado}")
+            cifrar(n2, e2, pad2)
+        elif actividad == "D":
+            descifrar(n1, pad1, d1)
+
 
 if __name__ == "__main__":
     main()
