@@ -75,7 +75,7 @@ def aplicar_padding(m:int, digitos_padding:int)->int:
         aplicar_padding(24,3)=24845
         aplicar_padding(24,0)=24
     """
-    vals_padding = random.choices(range(1,10), k=3) 
+    vals_padding = random.choices(range(1,10), k=digitos_padding) 
     vals_padding = int(''.join(map(str, vals_padding))) 
 
     m_padded = str(m) + str(vals_padding)
@@ -167,7 +167,11 @@ def codificar_cadena(s:str)->List[int]:
     Example:
         codificar_cadena("¡Hola mundo!")=[161, 72, 111, 108, 97, 32, 109, 117, 110, 100, 111, 33]
     """
-    pass
+    codes = [ord(character) for character in s]
+    
+    return codes
+
+
 
 
 def decodificar_cadena(m:List[int])->str:
@@ -186,7 +190,13 @@ def decodificar_cadena(m:List[int])->str:
     Example:
         decodificar_cadena([161, 72, 111, 108, 97, 32, 109, 117, 110, 100, 111, 33])="¡Hola mundo!"
     """
-    pass
+    lista_cadena = []
+    for num in m: 
+        lista_cadena.append(chr(num))
+    
+    palabra = "".join(lista_cadena)
+
+    return palabra
 
 
 def cifrar_cadena_rsa(s:str,n:int,e:int,digitos_padding:int)->List[int]:
