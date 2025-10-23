@@ -222,10 +222,7 @@ def cifrar_cadena_rsa(s:str,n:int,e:int,digitos_padding:int)->List[int]:
     """
     cifrado = []
     for valor in s:
-        if valor.isdigit():
-            valor_cifrado = cifrar_rsa(int(valor), n, e, digitos_padding)
-        else:
-            valor_cifrado = cifrar_rsa(ord(valor), n, e, digitos_padding)
+        valor_cifrado = cifrar_rsa(ord(valor), n, e, digitos_padding)
         cifrado.append(valor_cifrado)
     return cifrado
 
@@ -292,3 +289,6 @@ def ataque_texto_elegido(cList:List[int],n:int,e:int)->str:
     #desciframos cList
     mensaje = descifrar_cadena_rsa(cList, n, d, 0)
     return mensaje
+
+if __name__ == "__main__":
+    aplicar_padding(0,1)
