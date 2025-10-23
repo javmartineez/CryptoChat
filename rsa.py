@@ -4,16 +4,17 @@ rsa.py
 Matemática Discreta - IMAT
 ICAI, Universidad Pontificia Comillas
 
-Grupo: GPxxx
+Grupo: GP09B
 Integrantes:
-    - XX
-    - XX
+    - Javier Mochales López
+    - Javier Martínez Berenguer 
 
 Descripción:
 Librería para la realización de cifrado y descifrado usando el algoritmo RSA.
 """
-import modular
+import modular as mod
 from typing import Tuple,List
+import random
 
 
 def generar_claves(min_primo:int,max_primo:int)-> Tuple[int,int,int]:
@@ -34,9 +35,27 @@ def generar_claves(min_primo:int,max_primo:int)-> Tuple[int,int,int]:
     Raises:
         ValueError: Si no es posible encontrar una pareja de primos distintos p1,p2 entre min_primo y max_primo
     """
-    pass
+    if min_primo > max_primo: 
+        raise ValueError ("Intervalo mal construido (min > max)")
+    
+    lista_primos = mod.lista_primos(min_primo, max_primo)
+    p = random.choice(lista_primos)
+    q = random.choice(lista_primos)
 
-def aplicar_padding(m:int,digitos_padding:int)->int:
+    n = p * q 
+    phi_n = (p-1)*(q-1)
+
+    e = 2
+    while not mod.coprimos(e, phi_n):
+        e = random.randint(2, phi_n)
+
+    d = mod.inversa_mod_p(e, phi_n)
+
+    return n, e, d
+
+
+
+def aplicar_padding(m:int, digitos_padding:int)->int:
     """Dado un mensaje y un número de dígitos de padding, añade
     digitos_padding cifras aleatorias a la derecha del mensaje
     
@@ -56,7 +75,12 @@ def aplicar_padding(m:int,digitos_padding:int)->int:
         aplicar_padding(24,3)=24845
         aplicar_padding(24,0)=24
     """
-    pass
+    vals_padding = random.choices(range(1,10), k=3) 
+    vals_padding = int(''.join(map(str, vals_padding))) 
+
+    m_padded = str(m) + str(vals_padding)
+
+    return int(m_padded)
 
 
 def eliminar_padding(m:int,digitos_padding:int)->int:
@@ -80,7 +104,11 @@ def eliminar_padding(m:int,digitos_padding:int)->int:
         eliminar_padding(2432,2)=24
         eliminar_padding(2432,0)=2432
     """
-    pass
+    m_padded = str(m)
+
+    m = int(m_padded[:-digitos_padding])
+
+    return m 
 
 
 def cifrar_rsa(m:int,n:int,e:int,digitos_padding:int)->int:
