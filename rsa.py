@@ -77,11 +77,11 @@ def aplicar_padding(m:int, digitos_padding:int)->int:
         aplicar_padding(24,3)=24845
         aplicar_padding(24,0)=24
     """
-    if digitos_padding == 0:
+    if digitos_padding == 0:        #En caso de añadir 0 digitos devuelve el número sin modificar
         return m
     else:
-        vals_padding = random.choices(range(1,10), k=digitos_padding) 
-        vals_padding = int(''.join(map(str, vals_padding))) 
+        vals_padding = random.choices(range(10), k=digitos_padding)       #obtine "digitos_padding" números distintos entre 0-9 pudiendo repetirse
+        vals_padding = int(''.join(map(str, vals_padding)))     #convertimos los valores de la lista a str y juntamos los valores con delimitador nulo
 
         m_padded = str(m) + str(vals_padding)
         return int(m_padded)
