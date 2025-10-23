@@ -39,6 +39,10 @@ def generar_claves(min_primo:int,max_primo:int)-> Tuple[int,int,int]:
         raise ValueError ("Intervalo mal construido (min > max)")
     
     lista_primos = mod.lista_primos(min_primo, max_primo)
+
+    if len(lista_primos) == 0: 
+        raise ValueError ("Intervalo insuficientemente amplio")
+    
     p = random.choice(lista_primos)
     q = random.choice(lista_primos)
 
@@ -191,13 +195,13 @@ def decodificar_cadena(m:List[int])->str:
     Example:
         decodificar_cadena([161, 72, 111, 108, 97, 32, 109, 117, 110, 100, 111, 33])="¡Hola mundo!"
     """
-    lista_cadena = []
-    for num in m: 
-        lista_cadena.append(chr(num))
-    
-    palabra = "".join(lista_cadena)
 
-    return palabra
+    try:
+        return ''.join(chr(num) for num in m) #unimos los caracteres representados por cada elementos de la lista
+    
+    except (TypeError, ValueError) as e:
+        raise ValueError("Algún elemento no es un entero Unicode válido") from e
+
 
 
 def cifrar_cadena_rsa(s:str,n:int,e:int,digitos_padding:int)->List[int]:
@@ -260,7 +264,9 @@ def romper_clave(n:int,e:int)->int:
     Raises:
         ValueError: Si no existe ninguna clave privada d compatible con la clave pública (n,e).
     """
-    pass
+    d = mod.inversa_mod_p(e, mod.euler(n))
+
+    return d 
 
 
 def ataque_texto_elegido(cList:List[int],n:int,e:int)->str:
@@ -268,7 +274,7 @@ def ataque_texto_elegido(cList:List[int],n:int,e:int)->str:
     con RSA plano sin usar padding a partir de su clave pública.
 
     Args:
-        cList (List[int]): lisa de enteros que representan el mensaje cifrado
+        cList (List[int]): lista de enteros que representan el mensaje cifrado
         n (int): módulo para RSA
         e (int): clave pública para RSA
     
@@ -278,4 +284,9 @@ def ataque_texto_elegido(cList:List[int],n:int,e:int)->str:
     Raises:
         ValueError: Si el mensaje no se corresponde con ningún texto plano que haya sido codificado con RSA sin padding.
     """
-    pass
+    #calculamos clave privada
+    d = romper_clave(n, e)
+
+    #desciframos cList
+    mensaje = descifrar_cadena_rsa(cList, n, d, 0)
+    return mensaje
