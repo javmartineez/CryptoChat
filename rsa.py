@@ -42,16 +42,16 @@ def generar_claves(min_primo:int,max_primo:int)-> Tuple[int,int,int]:
     if len(lista_primos) < 2:      #Si la lista está vacia no es válida, se necesitan al menos dos primos
         raise ValueError("Intervalo insuficientemente amplio")
     
-    p, q = random.sample(lista_primos, k= 2)
+    p, q = random.sample(lista_primos, k= 2)    #obtiene dos primos aleatorios distintos dentro de lista_primos
 
-    n = p * q 
-    phi_n = (p-1)*(q-1)
+    n = p*q       #módulo para RSA
+    phi_n = (p-1)*(q-1)     #función fi de euler sobre el valor n
 
-    e = 2
-    while not mod.coprimos(e, phi_n):
-        e = random.randint(2, phi_n)
+    e = 3
+    while not mod.coprimos(e, phi_n):      #si el exponente 3 no es coprimo con phi_n buscamos de forma aleatoria un e hasta conseguirlo
+        e = random.randint(4, phi_n)        #e siempre tiene que ser menor que phi_n
 
-    d = mod.inversa_mod_p(e, phi_n)
+    d = mod.inversa_mod_p(e, phi_n)     #clave privada del usuario principal
 
     return (n, e, d)
 
