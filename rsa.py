@@ -40,10 +40,9 @@ def generar_claves(min_primo:int,max_primo:int)-> Tuple[int,int,int]:
     
     lista_primos = mod.lista_primos(min_primo, max_primo)       #obtiene la lista de primos entre min_primo(incluido) y max_primo(sin incluir)
     if len(lista_primos) < 2:      #Si la lista está vacia no es válida, se necesitan al menos dos primos
-        raise ValueError ("Intervalo insuficientemente amplio")
+        raise ValueError("Intervalo insuficientemente amplio")
     
-    p = random.choice(lista_primos)
-    q = random.choice(lista_primos)
+    p, q = random.sample(lista_primos, k= 2)
 
     n = p * q 
     phi_n = (p-1)*(q-1)
