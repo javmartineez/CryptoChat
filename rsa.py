@@ -83,7 +83,7 @@ def aplicar_padding(m:int, digitos_padding:int)->int:
         vals_padding = random.choices(range(10), k=digitos_padding)       #obtine "digitos_padding" números distintos entre 0-9 pudiendo repetirse
         vals_padding = int(''.join(map(str, vals_padding)))     #convertimos los valores de la lista a str y juntamos los valores con delimitador nulo
 
-        m_padded = str(m) + str(vals_padding)
+        m_padded = str(m) + str(vals_padding)       #une el mensaje con el padding
         return int(m_padded)
 
 
@@ -109,7 +109,7 @@ def eliminar_padding(m:int,digitos_padding:int)->int:
         eliminar_padding(2432,0)=2432
     """
 
-    return m if digitos_padding == 0 else int(str(m)[:-digitos_padding])
+    return m if digitos_padding == 0 else int(str(m)[:-digitos_padding])    #si no hay padding devolvemos m y sino devolvemos m sin los "digitos_padding" últimos valores
 
 
 def cifrar_rsa(m:int,n:int,e:int,digitos_padding:int)->int:
@@ -130,8 +130,8 @@ def cifrar_rsa(m:int,n:int,e:int,digitos_padding:int)->int:
     Raises: None
     """
     
-    num = aplicar_padding(m, digitos_padding)
-    return mod.potencia_mod_p(num, e, n)
+    num = aplicar_padding(m, digitos_padding)       #añade el padding al mensaje
+    return mod.potencia_mod_p(num, e, n)        #ciframos el mensaje con el padding
 
 
 def descifrar_rsa(c:int,n:int,d:int,digitos_padding:int)->int:
@@ -152,7 +152,7 @@ def descifrar_rsa(c:int,n:int,d:int,digitos_padding:int)->int:
 
     Raises: None
     """
-    descifrado = chr(eliminar_padding(mod.potencia_mod_p(c, d, n), digitos_padding))
+    descifrado = chr(eliminar_padding(mod.potencia_mod_p(c, d, n), digitos_padding))        #descifra el mensaje obteniendo código ascii y devolviendo el valor original
     return descifrado
 
 
@@ -171,7 +171,7 @@ def codificar_cadena(s:str)->List[int]:
     Example:
         codificar_cadena("¡Hola mundo!")=[161, 72, 111, 108, 97, 32, 109, 117, 110, 100, 111, 33]
     """
-    codes = [ord(character) for character in s]
+    codes = [ord(character) for character in s]     #transforma el mensaje a código ascii
     
     return codes
 
@@ -196,9 +196,9 @@ def decodificar_cadena(m:List[int])->str:
     """
 
     try:
-        return ''.join(chr(num) for num in m) #unimos los caracteres representados por cada elementos de la lista
+        return ''.join(chr(num) for num in m)       #unimos los caracteres representados por cada elementos de la lista
     
-    except (TypeError, ValueError) as e:
+    except (TypeError, ValueError) as e:        #comprueba que todos los valores sean Unicode
         raise ValueError("Algún elemento no es un entero Unicode válido") from e
 
 
@@ -218,10 +218,11 @@ def cifrar_cadena_rsa(s:str,n:int,e:int,digitos_padding:int)->List[int]:
 
     Raises: None
     """
-    cifrado = []
-    for valor in s:
+    cifrado = []    #guarda los valores cifrados
+    for valor in s:     #cifra cada valor del mensaje por separado
         valor_cifrado = cifrar_rsa(ord(valor), n, e, digitos_padding)
         cifrado.append(valor_cifrado)
+        
     return cifrado
 
 
@@ -240,10 +241,11 @@ def descifrar_cadena_rsa(cList:List[int],n:int,d:int,digitos_padding:int)->str:
     Raises:
         ValueError: Si, tras decodificar, alguno de los enteros del mensaje no representa un caracter unicode válido.    
     """
-    mensaje = ""
-    for c in cList:
+    mensaje = ""        #string donde se va guardando el mensaje descifrado
+    for c in cList:     #recorre cada valor cifrado
         descifrado = str(descifrar_rsa(c, n, d, digitos_padding))
-        mensaje += descifrado
+        mensaje += descifrado       #añade el valor descifrado al mensaje
+    
     return mensaje
 
 
@@ -261,7 +263,7 @@ def romper_clave(n:int,e:int)->int:
     Raises:
         ValueError: Si no existe ninguna clave privada d compatible con la clave pública (n,e).
     """
-    d = mod.inversa_mod_p(e, mod.euler(n))
+    d = mod.inversa_mod_p(e, mod.euler(n))      #clave privada hackeada
 
     return d 
 
@@ -287,6 +289,3 @@ def ataque_texto_elegido(cList:List[int],n:int,e:int)->str:
     #desciframos cList
     mensaje = descifrar_cadena_rsa(cList, n, d, 0)
     return mensaje
-
-if __name__ == "__main__":
-    aplicar_padding(0,1)
