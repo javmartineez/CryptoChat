@@ -14,7 +14,9 @@ def main():
 
     Args: 
         None 
-    Return: 
+    Returns: 
+        None
+    Exceptions:
         None
     """
 
@@ -25,11 +27,11 @@ def main():
     max_primos = int(input("Valor minimo para generar clave RSA: "))
     pad_values = int(input("Número de cifras pading: "))
 
-    n, e, d = rsa.generar_claves(min_primos, max_primos)
-    escribir_fichero(nombre, n, e, d, pad_values)
+    n, e, d = rsa.generar_claves(min_primos, max_primos)        #clave pública y privada del usuario
+    escribir_fichero(nombre, n, e, d, pad_values)       #crea el fichero con las claves del usuario
 
 
-def escribir_fichero(nombre:str, n:int, e:int, d:int, pad_values:int):
+def escribir_fichero(nombre:str, n:int, e:int, d:int, pad_values:int) -> None:
     """
     Función encargada de abrir los ficheros y escribir los valores calculados 
     para cada nuevo usuario.
@@ -40,16 +42,18 @@ def escribir_fichero(nombre:str, n:int, e:int, d:int, pad_values:int):
         - d: clave privada 
         - pad_values: cifras de padding
 
-    Return: 
+    Returns: 
+        None
+    Exceptions:
         None
     """
-    with open(f"Usuarios/pub_{nombre}.txt", "w", encoding="UTF-8") as pub_file: 
+    with open(f"Usuarios/pub_{nombre}.txt", "w", encoding="UTF-8") as pub_file:     #abre un nuevo fichero con las claves públicas de "nombre"
 
-        pub_file.write(f"{n}\n")
-        pub_file.write(f"{e}\n")
-        pub_file.write(f"{pad_values}")
+        pub_file.write(f"{n}\n")        #módulo para RSA
+        pub_file.write(f"{e}\n")        #exponente para RSA
+        pub_file.write(f"{pad_values}")     #digitos del padding para RSA
     
-    with open(f"Usuarios/priv_{nombre}.txt", "w", encoding="UTF-8") as priv_file:
+    with open(f"Usuarios/priv_{nombre}.txt", "w", encoding="UTF-8") as priv_file:   #abre un nuevo fichero con la clave privada de "nombre"
         priv_file.write(f"{d}")
         
 
