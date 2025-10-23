@@ -35,12 +35,11 @@ def generar_claves(min_primo:int,max_primo:int)-> Tuple[int,int,int]:
     Raises:
         ValueError: Si no es posible encontrar una pareja de primos distintos p1,p2 entre min_primo y max_primo
     """
-    if min_primo > max_primo: 
+    if min_primo > max_primo:       #Comprueba que el primo pequeño es menor que el primo grande
         raise ValueError ("Intervalo mal construido (min > max)")
     
-    lista_primos = mod.lista_primos(min_primo, max_primo)
-
-    if len(lista_primos) == 0: 
+    lista_primos = mod.lista_primos(min_primo, max_primo)       #obtiene la lista de primos entre min_primo(incluido) y max_primo(sin incluir)
+    if len(lista_primos) < 2:      #Si la lista está vacia no es válida, se necesitan al menos dos primos
         raise ValueError ("Intervalo insuficientemente amplio")
     
     p = random.choice(lista_primos)
