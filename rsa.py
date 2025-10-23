@@ -128,7 +128,8 @@ def cifrar_rsa(m:int,n:int,e:int,digitos_padding:int)->int:
 
     Raises: None
     """
-    pass
+    num = 
+    return mod.potencia_mod_p()
 
 
 def descifrar_rsa(c:int,n:int,d:int,digitos_padding:int)->int:
@@ -204,7 +205,17 @@ def cifrar_cadena_rsa(s:str,n:int,e:int,digitos_padding:int)->List[int]:
 
     Raises: None
     """
-    pass
+    # text = input("Texto para cifrar: ")
+    # cifrado = ""
+    # for i in text:
+    #     random_values = random.choices(range(10), k = int(pad))
+    #     cifrado += m.potencia_mod_p(i + random_values, e, n) + " "
+    # return cifrado
+    cifrado = []
+    for i in s:
+        i_cifrado = cifrar_rsa(ord(i), n, e, digitos_padding)
+        cifrado.append(i_cifrado)
+    return cifrado
 
 
 def descifrar_cadena_rsa(cList:List[int],n:int,d:int,digitos_padding:int)->str:
