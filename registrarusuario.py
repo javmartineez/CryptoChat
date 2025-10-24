@@ -33,16 +33,16 @@ def main():
 
 def escribir_fichero(nombre:str, n:int, e:int, d:int, pad_values:int) -> None:
     """
-    Función encargada de abrir los ficheros y escribir los valores calculados 
+    Función encargada de abrir los ficheros y escribir los valores calculados
     para cada nuevo usuario.
 
     Args: 
         - nombre: Nombre del nuevo usuario
-        - n, e: clave publica 
-        - d: clave privada 
+        - n, e: clave publica
+        - d: clave privada
         - pad_values: cifras de padding
 
-    Returns: 
+    Returns:
         None
     Exceptions:
         None

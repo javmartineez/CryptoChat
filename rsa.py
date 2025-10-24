@@ -81,9 +81,9 @@ def aplicar_padding(m:int, digitos_padding:int)->int:
         return m
     else:
         vals_padding = random.choices(range(10), k=digitos_padding)       #obtine "digitos_padding" números distintos entre 0-9 pudiendo repetirse
-        vals_padding = int(''.join(map(str, vals_padding)))     #convertimos los valores de la lista a str y juntamos los valores con delimitador nulo
+        vals_padding = ''.join(map(str, vals_padding))     #convertimos los valores de la lista a str y juntamos los valores con delimitador nulo
 
-        m_padded = str(m) + str(vals_padding)       #une el mensaje con el padding
+        m_padded = str(m) + vals_padding       #une el mensaje con el padding
         return int(m_padded)
 
 
@@ -108,6 +108,7 @@ def eliminar_padding(m:int,digitos_padding:int)->int:
         eliminar_padding(2432,2)=24
         eliminar_padding(2432,0)=2432
     """
+    if len(str(m)) <= digitos_padding: return 0
 
     return m if digitos_padding == 0 else int(str(m)[:-digitos_padding])    #si no hay padding devolvemos m y sino devolvemos m sin los "digitos_padding" últimos valores
 
@@ -289,3 +290,8 @@ def ataque_texto_elegido(cList:List[int],n:int,e:int)->str:
     #desciframos cList
     mensaje = descifrar_cadena_rsa(cList, n, d, 0)
     return mensaje
+
+
+if __name__ == "__main__":
+    #assert(rsa.eliminar_padding(rsa.aplicar_padding(m,digitos_padding),digitos_padding)==m)
+    print(eliminar_padding(aplicar_padding(1,1),1))
