@@ -35,28 +35,30 @@ def generar_claves(min_primo:int,max_primo:int)-> Tuple[int,int,int]:
     Raises:
         ValueError: Si no es posible encontrar una pareja de primos distintos p1,p2 entre min_primo y max_primo
     """
-    if min_primo > max_primo: 
+    if min_primo > max_primo:       #Comprueba que el primo pequeño es menor que el primo grande
         raise ValueError ("Intervalo mal construido (min > max)")
     
-    lista_primos = mod.lista_primos(min_primo, max_primo)
-    p = random.choice(lista_primos)
-    q = random.choice(lista_primos)
+    lista_primos = mod.lista_primos(min_primo, max_primo)       #obtiene la lista de primos entre min_primo(incluido) y max_primo(sin incluir)
+    if len(lista_primos) < 2:      #Si la lista está vacia no es válida, se necesitan al menos dos primos
+        raise ValueError("Intervalo insuficientemente amplio")
+    
+    p, q = random.sample(lista_primos, k= 2)    #obtiene dos primos aleatorios distintos dentro de lista_primos
 
-    n = p * q 
-    phi_n = (p-1)*(q-1)
+    n = p*q       #módulo para RSA
+    phi_n = (p-1)*(q-1)     #función fi de euler sobre el valor n
 
-    e = 2
-    while not mod.coprimos(e, phi_n):
-        e = random.randint(2, phi_n)
+    e = 3
+    while not mod.coprimos(e, phi_n):      #si el exponente 3 no es coprimo con phi_n buscamos de forma aleatoria un e hasta conseguirlo
+        e = random.randint(4, phi_n)        #e siempre tiene que ser menor que phi_n
 
-    d = mod.inversa_mod_p(e, phi_n)
+    d = mod.inversa_mod_p(e, phi_n)     #clave privada del usuario principal
 
-    return n, e, d
+    return (n, e, d)
 
 
 
 def aplicar_padding(m:int, digitos_padding:int)->int:
-    """Dado un mensaje y un número de dígitos de padding, añade
+    """Dado un mensaje y un número de dígitos de padding, añade 
     digitos_padding cifras aleatorias a la derecha del mensaje
     
     Args:
@@ -75,12 +77,14 @@ def aplicar_padding(m:int, digitos_padding:int)->int:
         aplicar_padding(24,3)=24845
         aplicar_padding(24,0)=24
     """
-    vals_padding = random.choices(range(1,10), k=digitos_padding) 
-    vals_padding = int(''.join(map(str, vals_padding))) 
+    if digitos_padding == 0:        #En caso de añadir 0 digitos devuelve el número sin modificar
+        return m
+    else:
+        vals_padding = random.choices(range(10), k=digitos_padding)       #obtine "digitos_padding" números distintos entre 0-9 pudiendo repetirse
+        vals_padding = ''.join(map(str, vals_padding))     #convertimos los valores de la lista a str y juntamos los valores con delimitador nulo
 
-    m_padded = str(m) + str(vals_padding)
-
-    return int(m_padded)
+        m_padded = str(m) + vals_padding       #une el mensaje con el padding
+        return int(m_padded)
 
 
 def eliminar_padding(m:int,digitos_padding:int)->int:
@@ -104,11 +108,9 @@ def eliminar_padding(m:int,digitos_padding:int)->int:
         eliminar_padding(2432,2)=24
         eliminar_padding(2432,0)=2432
     """
-    m_padded = str(m)
+    if len(str(m)) <= digitos_padding: return 0
 
-    m = int(m_padded[:-digitos_padding])
-
-    return m 
+    return m if digitos_padding == 0 else int(str(m)[:-digitos_padding])    #si no hay padding devolvemos m y sino devolvemos m sin los "digitos_padding" últimos valores
 
 
 def cifrar_rsa(m:int,n:int,e:int,digitos_padding:int)->int:
@@ -128,8 +130,9 @@ def cifrar_rsa(m:int,n:int,e:int,digitos_padding:int)->int:
 
     Raises: None
     """
-    num = 
-    return mod.potencia_mod_p()
+    
+    num = aplicar_padding(m, digitos_padding)       #añade el padding al mensaje
+    return mod.potencia_mod_p(num, e, n)        #ciframos el mensaje con el padding
 
 
 def descifrar_rsa(c:int,n:int,d:int,digitos_padding:int)->int:
@@ -150,7 +153,8 @@ def descifrar_rsa(c:int,n:int,d:int,digitos_padding:int)->int:
 
     Raises: None
     """
-    pass
+    descifrado = chr(eliminar_padding(mod.potencia_mod_p(c, d, n), digitos_padding))        #descifra el mensaje obteniendo código ascii y devolviendo el valor original
+    return descifrado
 
 
 def codificar_cadena(s:str)->List[int]:
@@ -168,7 +172,7 @@ def codificar_cadena(s:str)->List[int]:
     Example:
         codificar_cadena("¡Hola mundo!")=[161, 72, 111, 108, 97, 32, 109, 117, 110, 100, 111, 33]
     """
-    codes = [ord(character) for character in s]
+    codes = [ord(character) for character in s]     #transforma el mensaje a código ascii
     
     return codes
 
@@ -191,13 +195,13 @@ def decodificar_cadena(m:List[int])->str:
     Example:
         decodificar_cadena([161, 72, 111, 108, 97, 32, 109, 117, 110, 100, 111, 33])="¡Hola mundo!"
     """
-    lista_cadena = []
-    for num in m: 
-        lista_cadena.append(chr(num))
-    
-    palabra = "".join(lista_cadena)
 
-    return palabra
+    try:
+        return ''.join(chr(num) for num in m)       #unimos los caracteres representados por cada elementos de la lista
+    
+    except (TypeError, ValueError) as e:        #comprueba que todos los valores sean Unicode
+        raise ValueError("Algún elemento no es un entero Unicode válido") from e
+
 
 
 def cifrar_cadena_rsa(s:str,n:int,e:int,digitos_padding:int)->List[int]:
@@ -215,16 +219,11 @@ def cifrar_cadena_rsa(s:str,n:int,e:int,digitos_padding:int)->List[int]:
 
     Raises: None
     """
-    # text = input("Texto para cifrar: ")
-    # cifrado = ""
-    # for i in text:
-    #     random_values = random.choices(range(10), k = int(pad))
-    #     cifrado += m.potencia_mod_p(i + random_values, e, n) + " "
-    # return cifrado
-    cifrado = []
-    for i in s:
-        i_cifrado = cifrar_rsa(ord(i), n, e, digitos_padding)
-        cifrado.append(i_cifrado)
+    cifrado = []    #guarda los valores cifrados
+    for valor in s:     #cifra cada valor del mensaje por separado
+        valor_cifrado = cifrar_rsa(ord(valor), n, e, digitos_padding)
+        cifrado.append(valor_cifrado)
+        
     return cifrado
 
 
@@ -243,7 +242,12 @@ def descifrar_cadena_rsa(cList:List[int],n:int,d:int,digitos_padding:int)->str:
     Raises:
         ValueError: Si, tras decodificar, alguno de los enteros del mensaje no representa un caracter unicode válido.    
     """
-    pass
+    mensaje = ""        #string donde se va guardando el mensaje descifrado
+    for c in cList:     #recorre cada valor cifrado
+        descifrado = str(descifrar_rsa(c, n, d, digitos_padding))
+        mensaje += descifrado       #añade el valor descifrado al mensaje
+    
+    return mensaje
 
 
 def romper_clave(n:int,e:int)->int:
@@ -260,7 +264,9 @@ def romper_clave(n:int,e:int)->int:
     Raises:
         ValueError: Si no existe ninguna clave privada d compatible con la clave pública (n,e).
     """
-    pass
+    d = mod.inversa_mod_p(e, mod.euler(n))      #clave privada hackeada
+
+    return d 
 
 
 def ataque_texto_elegido(cList:List[int],n:int,e:int)->str:
@@ -268,7 +274,7 @@ def ataque_texto_elegido(cList:List[int],n:int,e:int)->str:
     con RSA plano sin usar padding a partir de su clave pública.
 
     Args:
-        cList (List[int]): lisa de enteros que representan el mensaje cifrado
+        cList (List[int]): lista de enteros que representan el mensaje cifrado
         n (int): módulo para RSA
         e (int): clave pública para RSA
     
@@ -278,4 +284,14 @@ def ataque_texto_elegido(cList:List[int],n:int,e:int)->str:
     Raises:
         ValueError: Si el mensaje no se corresponde con ningún texto plano que haya sido codificado con RSA sin padding.
     """
-    pass
+    #calculamos clave privada
+    d = romper_clave(n, e)
+
+    #desciframos cList
+    mensaje = descifrar_cadena_rsa(cList, n, d, 0)
+    return mensaje
+
+
+if __name__ == "__main__":
+    #assert(rsa.eliminar_padding(rsa.aplicar_padding(m,digitos_padding),digitos_padding)==m)
+    print(eliminar_padding(aplicar_padding(1,1),1))
