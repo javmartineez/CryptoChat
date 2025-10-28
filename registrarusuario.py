@@ -1,6 +1,5 @@
 import modular as mod
 import rsa 
-import random
 
 def main(): 
     """

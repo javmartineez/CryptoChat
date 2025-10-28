@@ -58,7 +58,7 @@ def generar_claves(min_primo:int,max_primo:int)-> Tuple[int,int,int]:
 
 
 def aplicar_padding(m:int, digitos_padding:int)->int:
-    """Dado un mensaje y un número de dígitos de padding, añade
+    """Dado un mensaje y un número de dígitos de padding, añade 
     digitos_padding cifras aleatorias a la derecha del mensaje
     
     Args:

@@ -68,8 +68,8 @@ def cifrar(n: int, e: int, pad: int) -> None:
         raise ex.NegativeValue("El número de digitos del padding no puede ser negativo")
     
     text = input("Texto para cifrar: ")
-    cifrado = rsa.cifrar_cadena_rsa(text, n, e, pad)        #obtenemos el texto cifrado en forma de lista por cada valor del texto
-    print(f"Texto cifrado: {cifrado}")      #mostramos el texto cifrado
+    cifrado = rsa.cifrar_cadena_rsa(text, n, e, pad)      #obtenemos el texto cifrado en forma de lista por cada valor del texto
+    print("Texto cifrado: ", *cifrado)      #mostramos el texto cifrado
 
 
 def descifrar(n: int, pad: int, d: int) -> None:

@@ -209,10 +209,7 @@ def mcd(a:int,b:int)->int:
     return b << shift        # al terminar, b es el mcd
 
    
-
-
-
-
+   
 def bezout(a:int, b:int) -> Tuple[int,int,int]:
     """ Calcula el máximo común divisor d de dos enteros a y b junto con dos enteros x e y tales que
             d=ax+by
@@ -231,23 +228,21 @@ def bezout(a:int, b:int) -> Tuple[int,int,int]:
     Examples:
         bezout(6,10)=(2,2,-1)
     """
-    #Guardamos los signos para la solución
     sign_a = -1 if a < 0 else 1
     sign_b = -1 if b < 0 else 1
     a, b = abs(a), abs(b)
 
-    r, r_aux = a, b
-    x, x_aux = 1, 0
-    y, y_aux = 0, 1
+    r, r1 = a, b
+    x, x1 = 1, 0
+    y, y1 = 0, 1
 
-    while r_aux != 0:
-        q = r // r_aux  #Analizamos el resto
-        r, r_aux = r_aux, r - q * r_aux
-        x, x_aux = x_aux, x - q * x_aux #Actualizamos coeficiente x
-        y, y_aux = y_aux, y - q * y_aux #Actualizamos coeficiente y
+    while r1:
+        q, r2 = divmod(r, r1)   # r = q*r1 + r2
+        r, r1 = r1, r2
+        x, x1 = x1, x - q*x1
+        y, y1 = y1, y - q*y1
 
-
-    return r, x * sign_a, y * sign_b
+    return r, x*sign_a, y*sign_b
 
 
 def mcd_n(nlist:List[int])->int:
@@ -394,24 +389,24 @@ def inversa_mod_p(n:int,p:int)->int:
         inversa_mod_p(2,7)=4
     """
 
-    if p == 0: # Comprobamos módulo 0
-        raise ZeroDivisionError
-    p0 = p 
-    x0, x1 = 0, 1
-    n %= p  # disminuir n si es más grande que el módulo
+    if p <= 0:
+        raise ZeroDivisionError("El módulo debe ser positivo.")
+    a = n % p
+    if a == 0:
+        raise ZeroDivisionError("No existe inversa: n ≡ 0 (mod p).")
 
-    while n > 1:
-        if p == 0:
-            raise ZeroDivisionError(f"No existe inversa: mcd(n,p) != 1")
+    r, r1 = a, p
+    x, x1 = 1, 0   # Solo llevamos coeficientes de 'a'
+    while r1:
+        q, r2 = divmod(r, r1)
+        r, r1 = r1, r2
+        # Actualizamos x pero siempre reducido mod p para que no crezca
+        x, x1 = x1, (x - q*x1) % p
 
-        q = n // p  # cociente
-        n, p = p, n % p
-        x0, x1 = x1 - q * x0, x0
-
-    if n != 1:  # mcd(n,p) != 1 → no son coprimos
+    if r != 1:
         raise ZeroDivisionError("No existe inversa: n y p no son coprimos.")
+    return x % p
 
-    return x1 % p0
 
 def inversa_sin_verificacion(n:int, p:int) -> int:
     x0, x1 = 0, 1
