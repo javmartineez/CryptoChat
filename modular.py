@@ -46,7 +46,7 @@ def es_primo(n:int)->bool: #Editado
         return True
 
     #Numeros < 1 ó pares NO son primos
-    elif n < 2 or n % 2 == 0:
+    elif n < 2 or n & 1 == 0:
         return False
 
     #Algoritmo principal
@@ -57,6 +57,39 @@ def es_primo(n:int)->bool: #Editado
                 return False
 
         return True
+    
+def _es_compuesto(n, a, d, r):
+    """Devuelve True si 'n' es compuesto usando la base 'a'."""
+    x = potencia_mod_p(a, d, n)
+    if x == 1 or x == n - 1:
+        return False
+    for _ in range(r - 1):
+        x = potencia_mod_p(x, 2, n)
+        if x == n - 1:
+            return False
+    return True
+
+def es_primo_mr(n):
+    """Test de Miller–Rabin determinista para n < 10^10."""
+    if n < 2:
+        return False
+    # chequeo rápido de divisibilidad por primos pequeños
+    for p in [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]:
+        if n % p == 0:
+            return n == p
+
+    # descomposición n - 1 = 2^r * d
+    d, r = n - 1, 0
+    base2 = d & -d
+    r = base2.bit_length() - 1
+    d //= base2
+
+    # bases suficientes para n < 3.8e18 (cubre sobradamente 10 cifras)
+    for a in [2, 3, 5, 7, 11]:
+        if _es_compuesto(n, a, d, r):
+            return False
+    return True
+
 
 
 def lista_primos(a,b)-> List[int]: #Editada
@@ -81,12 +114,12 @@ def lista_primos(a,b)-> List[int]: #Editada
         primes.append(2)
 
     # Ajustamos 'a' para empezar desde el primer impar >= a
-    if a % 2 == 0:
+    if a & 1 == 0:
         a += 1
 
     # Algoritmo principal: iteramos solo sobre impares
     for i in range(a, b, 2):
-        if es_primo(i):
+        if es_primo_mr(i):
             primes.append(i)
 
     return primes
