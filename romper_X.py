@@ -1,7 +1,17 @@
-import re 
 import rsa 
+from typing import Tuple, List
 
-def leer_fichero(ruta):
+def leer_fichero(ruta:str) -> Tuple:
+    """
+    Función encargada de leer el criptograma X y obtener la 
+    clave pública y generar una lista del mensaje encriptado 
+
+    Args: 
+        - ruta: ruta al fichero criptograma_X.txt
+    Returns: 
+        - n, e: clave pública 
+        - encrypted_text(list): lista con cada caracter cifrado
+    """
 
     with open(ruta, "r", encoding="utf-8") as f:
         lines = f.read().strip().splitlines()

@@ -284,12 +284,29 @@ def ataque_texto_elegido(cList:List[int],n:int,e:int)->str:
     Raises:
         ValueError: Si el mensaje no se corresponde con ningún texto plano que haya sido codificado con RSA sin padding.
     """
-    #calculamos clave privada
-    d = romper_clave(n, e)
+    #idea principal. A partir de la clave publica, cremaos un codebook con todos 
+    #los posibles m codificados para cada letra. Vamos rellenando el diccionario a medida
+    #que recorremos la lista. 
 
-    #desciframos cList
-    mensaje = descifrar_cadena_rsa(cList, n, d, 0)
-    return mensaje
+
+    codebook = {}
+
+    for i in range(256): 
+        #utilizamos clave publica para generar diccionario de codigos
+        chr_coded = mod.potencia_mod_p(i, e, n)
+        codebook[chr_coded] = i
+
+    #recorremos lista para generar mensaje
+    m = []
+    for chr_coded in cList: 
+        if chr_coded in codebook:
+            m.append(chr(codebook[chr_coded]))
+        else:
+            raise ValueError ("Mensaje no correspondiente a ningún texto plano codificado con RSA sin padding")
+   
+    #pasamos el mensaje a string 
+    m_str = ''.join(m)
+    return m_str
 
 
 if __name__ == "__main__":
