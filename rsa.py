@@ -284,7 +284,7 @@ def ataque_texto_elegido(cList:List[int],n:int,e:int)->str:
     Raises:
         ValueError: Si el mensaje no se corresponde con ningún texto plano que haya sido codificado con RSA sin padding.
     """
-    #idea principal. A partir de la clave publica, cremaos un codebook con todos 
+    #Idea principal: A partir de la clave publica, cremaos un codebook con todos 
     #los posibles m codificados para cada letra. Vamos rellenando el diccionario a medida
     #que recorremos la lista. 
 

@@ -601,6 +601,7 @@ def resolver_sistema_congruencias(alist:List[int], blist:List[int], plist:List[i
         final_rest %= final_module      # normalizamos el resultado
     return (final_rest % final_module, final_module)
 
+
 def ecuacion_cuadratica(a:int,b:int,c:int,p:int)->Tuple[int,int]:
     """ Halla, si es posible, las dos posibles soluciones de la ecuación cuadrática ax^2+bx+c=0 (mod p).
     Devuelve una tupla con las dos raíces (distintas o una misma raíz repetida en caso de ser doble).
