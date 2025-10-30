@@ -379,10 +379,10 @@ def potencia_mod_p(base:int, exp:int, p:int) -> int:
     """
     if p == 0:
         raise ZeroDivisionError("El módulo no puede ser 0.")
-    if p < 0:
-        raise IncompatibleEquationError("El módulo no puede ser negativo")
+    
     if base == 0 and exp == 0:
         raise ZeroDivisionError("Indeterminación 0^0 ")
+    p = abs(p)
     
     if p == 1:  #Cualquier número en módulo 1 es 0
         return 0  
@@ -657,3 +657,6 @@ def raiz_mod_p(n:int,p:int)->int:
     # Si no, no exite la raíz
     raise IncompatibleEquationError("no existe raíz")
 
+if __name__ == "__main__":
+    print(potencia_mod_p(2,3,-3))
+    print(potencia_mod_p(2,3,3))
