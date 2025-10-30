@@ -153,7 +153,7 @@ def descifrar_rsa(c:int,n:int,d:int,digitos_padding:int)->int:
 
     Raises: None
     """
-    descifrado = chr(eliminar_padding(mod.potencia_mod_p(c, d, n), digitos_padding))        #descifra el mensaje obteniendo código ascii y devolviendo el valor original
+    descifrado = eliminar_padding(mod.potencia_mod_p(c, d, n), digitos_padding)       #descifra el mensaje obteniendo código ascii y devolviendo el valor original
     return descifrado
 
 
@@ -244,8 +244,12 @@ def descifrar_cadena_rsa(cList:List[int],n:int,d:int,digitos_padding:int)->str:
     """
     mensaje = ""        #string donde se va guardando el mensaje descifrado
     for c in cList:     #recorre cada valor cifrado
-        descifrado = str(descifrar_rsa(c, n, d, digitos_padding))
-        mensaje += descifrado       #añade el valor descifrado al mensaje
+        try:
+            descifrado = chr(descifrar_rsa(c, n, d, digitos_padding))
+            mensaje += descifrado       #añade el valor descifrado al mensaje
+            
+        except (TypeError, ValueError) as e:        #comprueba que todos los valores sean Unicode
+            raise ValueError("Algún elemento no es un entero Unicode válido") from e
     
     return mensaje
 
@@ -264,9 +268,11 @@ def romper_clave(n:int,e:int)->int:
     Raises:
         ValueError: Si no existe ninguna clave privada d compatible con la clave pública (n,e).
     """
-    d = mod.inversa_mod_p(e, mod.euler(n))      #clave privada hackeada
-
-    return d 
+    try:
+        d = mod.inversa_mod_p(e, mod.euler(n))      #clave privada hackeada
+        return d
+    except (ZeroDivisionError, ValueError) as e:        #comprueba que todos los valores sean Unicode
+            raise ValueError("No existe ninguna clave privada d compatible con la clave pública") from e
 
 
 def ataque_texto_elegido(cList:List[int],n:int,e:int)->str:
@@ -307,6 +313,11 @@ def ataque_texto_elegido(cList:List[int],n:int,e:int)->str:
     #pasamos el mensaje a string 
     m_str = ''.join(m)
     return m_str
+
+def ataque_texto_elegido_pad(cList: List[int], n, e, digitos_padding: int) -> str:
+    d = romper_clave(n, e)
+    mensaje = descifrar_cadena_rsa(cList, n, d, digitos_padding)
+    print(mensaje)
 
 
 if __name__ == "__main__":

@@ -422,11 +422,11 @@ def inversa_mod_p(n:int,p:int)->int:
         inversa_mod_p(2,7)=4
     """
 
-    if p <= 0:
-        raise ZeroDivisionError("El módulo debe ser positivo.")
+    if p == 0:
+        raise ZeroDivisionError("El módulo no puede ser 0.")
+    
+    p = abs(p)
     a = n % p
-    if a == 0:
-        raise ZeroDivisionError("No existe inversa: n ≡ 0 (mod p).")
 
     r, r1 = a, p
     x, x1 = 1, 0   # Solo llevamos coeficientes de 'a'
@@ -655,4 +655,5 @@ def raiz_mod_p(n:int,p:int)->int:
             # Se devuelve la primera que se halla
             return x
     # Si no, no exite la raíz
-    raise IncompatibleEquationError("no existe raíz")
+    raise IncompatibleEquationError("no existe raíz")
+
