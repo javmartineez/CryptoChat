@@ -14,5 +14,5 @@ def test_potencia_mod_p_cero():
     """ Este test comprueba que, en los casos esperados,
     realmente se lanza la excepción esperada"""
     with pytest.raises(ZeroDivisionError):
-        modular.inversa_mod_p(2,4) #caso NO invertible - el argumento y el módulo no son coprimos
+        modular.inversa_mod_p(2,4) #NON-invertible case - the argument and the modulus are not coprime
 

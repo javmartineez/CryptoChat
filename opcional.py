@@ -1,6 +1,6 @@
 import rsa
 
-texto = "En medio del bosque, donde los árboles parecían susurrar historias de otros tiempos, una pequeña brújula giraba sin rumbo sobre una roca. Nadie sabía quién la había dejado allí, pero cada amanecer apuntaba a un lugar distinto. Algunos decían que marcaba los sueños perdidos; otros, que señalaba el camino hacia aquello que más se anhela. Mientras tanto, un colibrí observaba desde lo alto, convencido de que incluso los objetos olvidados tienen su propio destino."
+texto = "In the middle of the forest, where the trees seemed to whisper stories from other times, a small compass spun aimlessly on a rock. Nobody knew who had left it there, but every dawn it pointed to a different place. Some said it marked lost dreams; others, that it showed the way to what one longs for most. Meanwhile, a hummingbird watched from above, convinced that even forgotten objects have their own destiny."
 n_min = 1000000000
 n_max = 1000900000
 digitos_padding = 3

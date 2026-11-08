@@ -3,14 +3,14 @@ from typing import Tuple, List
 
 def leer_fichero(ruta:str) -> Tuple:
     """
-    Función encargada de leer el criptograma X y obtener la 
-    clave pública y generar una lista del mensaje encriptado 
+    Reads cryptogram X, extracts the
+    public key and builds a list with the encrypted message
 
     Args: 
-        - ruta: ruta al fichero criptograma_X.txt
+        - ruta: path to the criptograma_X.txt file
     Returns: 
-        - n, e: clave pública 
-        - encrypted_text(list): lista con cada caracter cifrado
+        - n, e: public key
+        - encrypted_text(list): list with each encrypted character
     """
 
     with open(ruta, "r", encoding="utf-8") as f:
